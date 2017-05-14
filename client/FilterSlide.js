@@ -29,6 +29,7 @@ class FilterSlide {
         this.img.style.position = 'absolute'
         this.w = window.innerWidth/2
         this.h = window.innerHeight/2
+        this.screen.setTotalX(-this.w*(colors.length-1))
         this.img.style.left = this.w*0.5
         this.image  = new Image()
         this.image.src = this.imageSrc
@@ -61,8 +62,15 @@ class Screen {
         this.initX = this.x
         this.maxDiff = maxDiff
         this.dir = 0
+        this.totalX = -10*window.innerWidth
+    }
+    setTotalX(totalX) {
+        this.totalX = totalX
     }
     translate() {
+        if((this.dir == -1 && this.x >= 0) || (this.dir == 1 && this.x <= this.totalX)) {
+           this.dir = 0
+        }
         this.x -= ((this.maxDiff/5)*this.dir)
         if(Math.abs(this.x - this.initX) >= this.maxDiff) {
             this.initX = this.x
