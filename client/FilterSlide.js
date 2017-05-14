@@ -1,23 +1,30 @@
 class FilterSlide {
-    constructor(imageSrc,filters) {
+    constructor(imageSrc) {
         this.imageSrc = imageSrc
-        this.filters = filters
         this.screen = new Screen()
     }
-    create() {
-        const w = window.innerWidth/2, h = window.innerHeight/2
-        const image  = new Image()
+    draw() {
+      this.context.clearRect(0,0,this.w,this.h)
+      this.context.drawImage(this.image,0,0,this.w,this.h)
+      this.context.save()
+      this.context.translate(this.screen.x,0)
+      this.filtes.forEach((filter)=>{
+          filter.draw(this.context)
+      })
+      this.context.restore()
+    }
+    apply(colors) {
+        this.w = window.innerWidth/2
+        this.h = window.innerHeight/2
+        this.image  = new Image()
         image.src = this.imageSrc
-        const canvas = document.createElement('canvas')
-        canvas.width = w
-        canvas.height = h
-        const context = canvas.getContext('2d')
-        image.onload = () => {
-            context.clearRect(0,0,w,h)
-            context.drawImage(image,0,0,w,h)
-            context.save()
-            context.translate(this.screen.x,0)
-            context.restore()
+        this.filters = colors.map((color,index)=>(new Filter(index*w,color)))
+        this.canvas = document.createElement('canvas')
+        this.canvas.width = this.w
+        this.canvas.height = this.h
+        this.context = this.canvas.getContext('2d')
+        this.image.onload = () => {
+            this.draw()
         }
     }
 }
