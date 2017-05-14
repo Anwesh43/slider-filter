@@ -2,6 +2,7 @@ class FilterSlide {
     constructor(imageSrc,filters) {
         this.imageSrc = imageSrc
         this.filters = filters
+        this.screen = new Screen()
     }
     create() {
         const w = window.innerWidth/2, h = window.innerHeight/2
@@ -15,7 +16,13 @@ class FilterSlide {
             context.clearRect(0,0,w,h)
             context.drawImage(image,0,0,w,h)
             context.save()
+            context.translate(this.screen.x,0)
             context.restore()
         }
+    }
+}
+class Screen {
+    constructor() {
+        this.x = 0
     }
 }
