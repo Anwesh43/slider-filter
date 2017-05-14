@@ -26,3 +26,17 @@ class Screen {
         this.x = 0
     }
 }
+class Filter {
+    constructor(x,color) {
+        this.x = x
+        this.color = color
+    }
+    draw(context,w,h) {
+        context.save()
+        context.translate(this.x,0)
+        context.fillStyle = this.color
+        context.opacity = 0.5
+        context.fillRect(0,0,w,h)
+        context.restore()
+    }
+}
