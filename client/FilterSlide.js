@@ -8,17 +8,30 @@ class FilterSlide {
       this.context.drawImage(this.image,0,0,this.w,this.h)
       this.context.save()
       this.context.translate(this.screen.x,0)
-      this.filtes.forEach((filter)=>{
-          filter.draw(this.context)
+      this.filters.forEach((filter)=>{
+          filter.draw(this.context,this.w,this.h)
       })
       this.context.restore()
+      this.img.src = this.canvas.toDataURL()
+    }
+    animateWhileSliding() {
+        const interval = setInterval(()=>{
+            this.screen.translate()
+            if(this.screen.stopTranslation()) {
+                clearInterval(interval)
+            }
+        },100)
     }
     apply(colors) {
+        this.img = document.createElement('img')
+        document.body.appendChild(this.img)
+        this.img.style.position = 'absolute'
         this.w = window.innerWidth/2
         this.h = window.innerHeight/2
+        this.img.style.left = this.w*0.5
         this.image  = new Image()
-        image.src = this.imageSrc
-        this.filters = colors.map((color,index)=>(new Filter(index*w,color)))
+        this.image.src = this.imageSrc
+        this.filters = colors.map((color,index)=>(new Filter(index*this.w,color)))
         this.canvas = document.createElement('canvas')
         this.canvas.width = this.w
         this.canvas.height = this.h
@@ -29,8 +42,24 @@ class FilterSlide {
     }
 }
 class Screen {
-    constructor() {
+    constructor(maxDiff) {
         this.x = 0
+        this.initX = this.x
+        this.maxDiff = maxDiff
+        this.dir = 0
+    }
+    translate() {
+        this.x -= ((this.maxDiff/5)*this.dir)
+        if(Math.abs(this.x - this.initX) >= maxDiff) {
+            this.initX = this.x
+            this.dir = 0
+        }
+    }
+    startTranslation(dir) {
+        this.dir = dir
+    }
+    stopTranslation() {
+        return this.dir == 0
     }
 }
 class Filter {
@@ -42,7 +71,7 @@ class Filter {
         context.save()
         context.translate(this.x,0)
         context.fillStyle = this.color
-        context.opacity = 0.5
+        context.globalAlpha = 0.6
         context.fillRect(0,0,w,h)
         context.restore()
     }
