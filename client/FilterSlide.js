@@ -1,7 +1,7 @@
 class FilterSlide {
     constructor(imageSrc) {
         this.imageSrc = imageSrc
-        this.screen = new Screen()
+        this.screen = new Screen(window.innerWidth/2)
     }
     draw() {
       this.context.clearRect(0,0,this.w,this.h)
@@ -17,6 +17,7 @@ class FilterSlide {
     animateWhileSliding() {
         const interval = setInterval(()=>{
             this.screen.translate()
+            this.draw()
             if(this.screen.stopTranslation()) {
                 clearInterval(interval)
             }
@@ -39,6 +40,19 @@ class FilterSlide {
         this.image.onload = () => {
             this.draw()
         }
+        window.onkeydown = (event)=>{
+            var dir = 0
+            if(event.keyCode == 37) {
+                dir = -1
+            }
+            else if(event.keyCode == 39) {
+                dir = 1
+            }
+            if(Math.abs(dir) == 1) {
+                this.screen.startTranslation(dir)
+                this.animateWhileSliding()
+            }
+        }
     }
 }
 class Screen {
@@ -50,7 +64,7 @@ class Screen {
     }
     translate() {
         this.x -= ((this.maxDiff/5)*this.dir)
-        if(Math.abs(this.x - this.initX) >= maxDiff) {
+        if(Math.abs(this.x - this.initX) >= this.maxDiff) {
             this.initX = this.x
             this.dir = 0
         }
